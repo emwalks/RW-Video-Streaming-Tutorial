@@ -59,9 +59,6 @@ final class LoopingPlayerUIView: UIView {
 		super.init(frame: .zero)
     addAllVideosToPlayer()
     
-    player?.volume = 0.0
-    player?.play()
-    
     playerLayer.player = player
     
     // Here, you’re registering a block to run each time the player’s currentItem property changes. When the current video changes, you want to check to see if the player has moved to the final video. If it has, then it’s time to add all the video clips back to the queue.
@@ -88,21 +85,40 @@ final class LoopingPlayerUIView: UIView {
       // 3
       player?.insert(item, after: player?.items().last)
     }
+  
   }
-
+  
+  func setVolume(_ targetVolume: Float) {
+    player?.volume = targetVolume
+  }
+  
+  func setRate(_ targetRate: Float) {
+    player?.rate = targetRate
+  }
   
 }
 
+// this is the bridge between the UIView above and Swift UI
 // to be able to use the AVPlayerLayer in SwiftUI we need to wrap it in a UIViewRepresentable
 struct LoopingPlayerView: UIViewRepresentable {
-  let videoURLs: [URL]
+ 
   typealias UIViewType = LoopingPlayerUIView
+  
+  let videoURLs: [URL]
+  @Binding var rate: Float
+  @Binding var volume: Float
   
   func makeUIView(context: Context) -> LoopingPlayerUIView {
     let view = LoopingPlayerUIView(urls: videoURLs)
+    view.setVolume(volume)
+    view.setRate(rate)
+    
     return view
   }
   
-  func updateUIView(_ uiView: LoopingPlayerUIView, context: Context) { }
+  func updateUIView(_ uiView: LoopingPlayerUIView, context: Context) {
+    uiView.setVolume(volume)
+    uiView.setRate(rate)
+  }
 }
 

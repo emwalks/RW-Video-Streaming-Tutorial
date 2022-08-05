@@ -37,6 +37,9 @@ struct VideoFeedView: View {
   private let videos = Video.fetchLocalVideos() + Video.fetchRemoteVideos()
   private let videoClips = VideoClip.urls
   @State private var selectedVideo: Video?
+  @State private var embeddedVideoRate: Float = 0.0
+  @State private var embeddedVideoVolume: Float = 0.0
+
 
   var body: some View {
     NavigationView {
@@ -63,14 +66,40 @@ struct VideoFeedView: View {
   private func makeEmbeddedVideoPlayer() -> some View {
     HStack {
       Spacer()
-      LoopingPlayerView(videoURLs: videoClips)
+      LoopingPlayerView(videoURLs: videoClips,
+                        rate: $embeddedVideoRate,
+                        volume: $embeddedVideoVolume)
         .background(Color.black)
         .frame(width: 250, height: 140)
         .cornerRadius(8)
         .shadow(radius: 4)
         .padding(.vertical)
+        .onAppear {
+          playVideo()
+        }
+        .onTapGesture(count: 2) {
+          // adds a listener for user ddouble tap
+          // Make sure to add the double-tap listener first, then the single-tap. If you do it in reverse, the double-tap listener will never get called.
+          videoRateDoubledOrNot()
+        }
+        .onTapGesture {
+          // adds a listener for single tap
+          volumeOnOrOff()
+        }
       Spacer()
     }
+  }
+  
+  private func playVideo() {
+    embeddedVideoRate = 1
+  }
+  
+  private func videoRateDoubledOrNot() {
+    embeddedVideoRate = embeddedVideoRate == 1.0 ? 2.0 : 1.0
+  }
+  
+  private func volumeOnOrOff() {
+    embeddedVideoVolume = embeddedVideoVolume == 1.0 ? 0.0 : 1.0
   }
   
   @ViewBuilder
