@@ -57,6 +57,9 @@ struct VideoFeedView: View {
       .navigationTitle("Travel Vlogs")
       .fullScreenCover(item: $selectedVideo) {
         // on Dismiss closure
+        // when we come out of full screen we reset the embedded video rate to 1, and audio off
+        embeddedVideoRate = 1.0
+        embeddedVideoVolume = 0.0
       } content: { item in
         makeFullScreenVideoPlayer(for: item)
       }
@@ -104,16 +107,20 @@ struct VideoFeedView: View {
   
   @ViewBuilder
   private func makeFullScreenVideoPlayer(for video: Video) -> some View {
-    // 1
+    
      if let url = video.videoURL {
-       // 2
+       // create avPlayer object for the video url
        let avPlayer = AVPlayer(url: url)
-       // 3 VideoPlayer is a SwiftUI view that needs a player object to be useful.
+       
+       // VideoPlayer is a SwiftUI view that needs a player object to be useful.
        VideoPlayer(player: avPlayer)
-         // 4
+       
+         // swiftUI respects safe areas - this ignores them
          .edgesIgnoringSafeArea(.all)
          .onAppear {
-           // 5
+           // pause the embedded video playback
+           embeddedVideoRate = 0.0
+           // this autoplays the item
            avPlayer.play()
          }
      } else {
