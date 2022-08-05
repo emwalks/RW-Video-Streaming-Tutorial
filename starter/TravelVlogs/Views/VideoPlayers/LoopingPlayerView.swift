@@ -45,17 +45,41 @@ final class LoopingPlayerUIView: UIView {
     return layer as! AVPlayerLayer
   }
   
+  private var player: AVQueuePlayer?
+  
   private var allURLs: [URL]
 
 	init(urls: [URL]) {
 		allURLs = urls
+    player = AVQueuePlayer()
 
 		super.init(frame: .zero)
+    addAllVideosToPlayer()
+    
+    player?.volume = 0.0
+    player?.play()
+    
+    playerLayer.player = player
+    
 	}
 
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
+  
+  private func addAllVideosToPlayer() {
+    for url in allURLs {
+      // 1
+      let asset = AVURLAsset(url: url)
+
+      // 2
+      let item = AVPlayerItem(asset: asset)
+
+      // 3
+      player?.insert(item, after: player?.items().last)
+    }
+  }
+
   
 }
 

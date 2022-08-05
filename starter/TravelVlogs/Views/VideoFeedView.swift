@@ -35,6 +35,7 @@ import AVKit
 
 struct VideoFeedView: View {
   private let videos = Video.fetchLocalVideos() + Video.fetchRemoteVideos()
+  private let videoClips = VideoClip.urls
   @State private var selectedVideo: Video?
 
   var body: some View {
@@ -62,14 +63,12 @@ struct VideoFeedView: View {
   private func makeEmbeddedVideoPlayer() -> some View {
     HStack {
       Spacer()
-
-      Rectangle()
+      LoopingPlayerView(videoURLs: videoClips)
         .background(Color.black)
         .frame(width: 250, height: 140)
         .cornerRadius(8)
         .shadow(radius: 4)
         .padding(.vertical)
-
       Spacer()
     }
   }
