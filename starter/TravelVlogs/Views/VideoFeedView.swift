@@ -111,10 +111,14 @@ struct VideoFeedView: View {
      if let url = video.videoURL {
        // create avPlayer object for the video url
        let avPlayer = AVPlayer(url: url)
+              
+       // replacing the Swift UI VideoPlayer for the one with the PiP bridge:
+    
+       //       // VideoPlayer is a SwiftUI view that needs a player object to be useful.
+       //       VideoPlayer(player: avPlayer)
        
-       // VideoPlayer is a SwiftUI view that needs a player object to be useful.
-       VideoPlayer(player: avPlayer)
-       
+       VideoPlayerView(player: avPlayer)
+
          // swiftUI respects safe areas - this ignores them
          .edgesIgnoringSafeArea(.all)
          .onAppear {
