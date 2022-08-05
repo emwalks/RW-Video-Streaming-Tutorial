@@ -31,12 +31,29 @@
 /// THE SOFTWARE.
 
 import SwiftUI
+import AVFoundation
 
 @main
 struct AppMain: App {
+  
+  init(){
+    
+  }
+  
   var body: some Scene {
     WindowGroup {
       VideoFeedView()
     }
+  }
+  
+  private func setMixWithOthersPlaybackCategory() {
+    // the default AVAudioSession is AVAudioSession.Category.soloAmbient
+    // when this is set, your apps audio shuts off any other audio from other apps
+    // below you’re also specifying that your app is using audio for “movie playback” and that you’re fine with the sound mixing with sound from other sources.
+    
+    try? AVAudioSession.sharedInstance().setCategory(
+      AVAudioSession.Category.ambient,
+      mode: AVAudioSession.Mode.moviePlayback,
+      options: [.mixWithOthers])
   }
 }
