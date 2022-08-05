@@ -31,9 +31,21 @@
 /// THE SOFTWARE.
 
 import SwiftUI
+import AVFoundation
 
 final class LoopingPlayerUIView: UIView {
-	private var allURLs: [URL]
+  // here we are instructing the LoopingPlayerUIView class to use a AVPlayerLayer instead of a plain CALayer when it wraps the CALayer as a UIView
+  override class var layerClass: AnyClass {
+    return AVPlayerLayer.self
+  }
+  
+  // computed property to set the layer as an AVPlayerLayer - removes need to cast later
+  // AVPlayerLayer is  a special CALayer and UI View is a wrapper around a CALayer
+  var playerLayer: AVPlayerLayer {
+    return layer as! AVPlayerLayer
+  }
+  
+  private var allURLs: [URL]
 
 	init(urls: [URL]) {
 		allURLs = urls
@@ -44,4 +56,19 @@ final class LoopingPlayerUIView: UIView {
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
+  
 }
+
+// to be able to use the AVPlayerLayer in SwiftUI we need to wrap it in a UIViewRepresentable
+struct LoopingPlayerView: UIViewRepresentable {
+  let videoURLs: [URL]
+  typealias UIViewType = LoopingPlayerUIView
+  
+  func makeUIView(context: Context) -> LoopingPlayerUIView {
+    let view = LoopingPlayerUIView(urls: videoURLs)
+    return view
+  }
+  
+  func updateUIView(_ uiView: LoopingPlayerUIView, context: Context) { }
+}
+
