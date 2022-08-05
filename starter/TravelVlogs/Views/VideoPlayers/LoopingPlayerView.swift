@@ -47,6 +47,9 @@ final class LoopingPlayerUIView: UIView {
   
   private var player: AVQueuePlayer?
   
+  // to use KVO in Swify you need to retain a reference to the observer
+  private var token: NSKeyValueObservation?
+  
   private var allURLs: [URL]
 
 	init(urls: [URL]) {
@@ -61,6 +64,13 @@ final class LoopingPlayerUIView: UIView {
     
     playerLayer.player = player
     
+    // Here, you’re registering a block to run each time the player’s currentItem property changes. When the current video changes, you want to check to see if the player has moved to the final video. If it has, then it’s time to add all the video clips back to the queue.
+    
+    token = player?.observe(\.currentItem) { [weak self] player, _ in
+      if player.items().count == 1 {
+        self?.addAllVideosToPlayer()
+      }
+    }
 	}
 
 	required init?(coder: NSCoder) {
