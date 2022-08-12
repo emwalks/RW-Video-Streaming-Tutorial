@@ -47,7 +47,7 @@ final class LoopingPlayerUIView: UIView {
   
   private var player: AVQueuePlayer?
   
-  // to use KVO in Swify you need to retain a reference to the observer
+  // to use KVO in Swift you need to retain a reference to the observer
   private var token: NSKeyValueObservation?
   
   private var allURLs: [URL]
